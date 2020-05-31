@@ -1,3 +1,7 @@
+using DeliverySimulator.OrderEmitter.OrderProviders;
+using DeliverySimulator.Shared;
+using Newtonsoft.Json;
+using RabbitMQ.Client;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,12 +14,27 @@ namespace DeliverySimulator.OrderEmitter
     {
         static void Main(string[] args)
         {
-            // The code provided will print ‘Hello World’ to the console.
-            // Press Ctrl+F5 (or go to Debug > Start Without Debugging) to run your app.
-            Console.WriteLine("Hello World!");
-            Console.ReadKey();
+            var jsonFileOrderProvider = new JsonFileOrderProvider("orders.json");
 
-            // Go to http://aka.ms/dotnet-get-started-console to continue learning how to build a console app! 
+            using (var queuePublisher = new QueuePublisher(Configuration.RabbitMQ.KitchenQueueName))
+            {
+                queuePublisher.Published += (sender, ea) =>
+                {
+                    Console.WriteLine($" [x] Sent order {ea.Message}");
+                };
+
+                var emitOrdersService = new EmitOrdersService(queuePublisher, jsonFileOrderProvider);
+
+                emitOrdersService.OnOutOfOrders += EmitOrdersService_OnOutOfOrders;
+                emitOrdersService.StartEmittingOrders();
+                Console.ReadKey();
+            }
+
+        }
+
+        private static void EmitOrdersService_OnOutOfOrders(object sender, EventArgs args)
+        {
+            Environment.Exit(0);
         }
     }
 }

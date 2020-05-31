@@ -1,9 +1,17 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28307.645
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29709.97
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeliverySimulator.OrderEmitter", "DeliverySimulator.OrderEmitter\DeliverySimulator.OrderEmitter.csproj", "{97D233BF-93BE-485C-896B-35A7CD9C56AC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeliverySimulator.Kitchen", "DeliverySimulator.Kitchen\DeliverySimulator.Kitchen.csproj", "{2206BDE4-36F5-4317-992A-E8EACB0AB79E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeliverySimulator.EventLogDisplay", "DeliverySimulator.EventLogDisplay\DeliverySimulator.EventLogDisplay.csproj", "{D05F055E-C7E1-4326-BB58-86B0B971F227}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeliverySimulator.Shared", "DeliverySimulator.Shared\DeliverySimulator.Shared.csproj", "{02195AA6-A211-46A8-A656-E73E99C529FF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeliverySimulator.UnitTests", "DeliverySimulator.UnitTests\DeliverySimulator.UnitTests.csproj", "{530C9345-DD8E-4391-B322-86125DB55147}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +23,22 @@ Global
 		{97D233BF-93BE-485C-896B-35A7CD9C56AC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{97D233BF-93BE-485C-896B-35A7CD9C56AC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{97D233BF-93BE-485C-896B-35A7CD9C56AC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2206BDE4-36F5-4317-992A-E8EACB0AB79E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2206BDE4-36F5-4317-992A-E8EACB0AB79E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2206BDE4-36F5-4317-992A-E8EACB0AB79E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2206BDE4-36F5-4317-992A-E8EACB0AB79E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D05F055E-C7E1-4326-BB58-86B0B971F227}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D05F055E-C7E1-4326-BB58-86B0B971F227}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D05F055E-C7E1-4326-BB58-86B0B971F227}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D05F055E-C7E1-4326-BB58-86B0B971F227}.Release|Any CPU.Build.0 = Release|Any CPU
+		{02195AA6-A211-46A8-A656-E73E99C529FF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{02195AA6-A211-46A8-A656-E73E99C529FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{02195AA6-A211-46A8-A656-E73E99C529FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{02195AA6-A211-46A8-A656-E73E99C529FF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{530C9345-DD8E-4391-B322-86125DB55147}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{530C9345-DD8E-4391-B322-86125DB55147}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{530C9345-DD8E-4391-B322-86125DB55147}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{530C9345-DD8E-4391-B322-86125DB55147}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

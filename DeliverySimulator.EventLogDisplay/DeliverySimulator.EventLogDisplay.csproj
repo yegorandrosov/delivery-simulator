@@ -4,10 +4,10 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{97D233BF-93BE-485C-896B-35A7CD9C56AC}</ProjectGuid>
+    <ProjectGuid>{D05F055E-C7E1-4326-BB58-86B0B971F227}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>DeliverySimulator.OrderEmitter</RootNamespace>
-    <AssemblyName>DeliverySimulator.OrderEmitter</AssemblyName>
+    <RootNamespace>DeliverySimulator.EventLogDisplay</RootNamespace>
+    <AssemblyName>DeliverySimulator.EventLogDisplay</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -61,18 +61,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="EmitOrderService.cs" />
-    <Compile Include="OrderProviders\IOrderProvider.cs" />
-    <Compile Include="OrderProviders\JsonFileOrderProvider.cs" />
-    <Compile Include="OrderProviders\JsonOrderProvider.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <None Include="orders.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

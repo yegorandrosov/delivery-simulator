@@ -1,12 +1,7 @@
 ﻿using DeliverySimulator.Kitchen.Models;
 using DeliverySimulator.Shared.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace DeliverySimulator.Kitchen.Shelves.Notifications
+namespace DeliverySimulator.Kitchen.Interfaces
 {
     public interface IShelfNotificationService
     {

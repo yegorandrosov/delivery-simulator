@@ -1,16 +1,9 @@
-﻿using DeliverySimulator.Kitchen.Shelves;
-using DeliverySimulator.Kitchen.Shelves.DataInitialization;
-using DeliverySimulator.Kitchen.Shelves.Notifications;
-using DeliverySimulator.Kitchen.Shelves.ShelfTimers;
+﻿using DeliverySimulator.Kitchen.Interfaces;
 using DeliverySimulator.Shared;
 using DeliverySimulator.Shared.Models;
 using System;
 using System.Collections;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Timers;
 
 namespace DeliverySimulator.Kitchen.Models

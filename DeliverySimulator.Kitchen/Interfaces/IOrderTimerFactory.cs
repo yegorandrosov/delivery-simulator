@@ -1,8 +1,7 @@
 ﻿using DeliverySimulator.Kitchen.Models;
-using DeliverySimulator.Shared.Models;
 using System.Timers;
 
-namespace DeliverySimulator.Kitchen.Shelves.ShelfTimers
+namespace DeliverySimulator.Kitchen.Interfaces
 {
     /// <summary>
     /// Factory interface to get timer for kitchen shelf events such as deterrioration or courier arrival

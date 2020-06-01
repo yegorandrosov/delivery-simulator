@@ -60,8 +60,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AppConfiguration.cs" />
-    <Compile Include="AppSettings.cs" />
+    <Compile Include="Configuration\AppConfiguration.cs" />
+    <Compile Include="Configuration\AppSettings.cs" />
     <Compile Include="Models\DeliverySimulatorEvent.cs" />
     <Compile Include="Models\Order.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

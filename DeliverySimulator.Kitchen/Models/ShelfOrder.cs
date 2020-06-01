@@ -25,6 +25,21 @@ namespace DeliverySimulator.Kitchen.Models
 
         public Order Order { get; }
 
+        private bool _hasTriggeredEvent;
+        public bool HasTriggeredEvent
+        {
+            get
+            {
+                return _hasTriggeredEvent;
+            }
+            set
+            {
+                _hasTriggeredEvent = true;
+
+                StopAllTimers();
+            }
+        }
+
         /// <summary>
         /// Get current deterrioration value. When reaches 0, order should be moved to the waste
         /// </summary>

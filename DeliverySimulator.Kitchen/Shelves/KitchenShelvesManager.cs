@@ -81,7 +81,15 @@ namespace DeliverySimulator.Kitchen.Models
 
             timer.Elapsed += (sender, args) =>
             {
-                OnOrderDeterrioration(shelf, shelfOrder);
+                lock (shelfOrder)
+                {
+                    if (!shelfOrder.HasTriggeredEvent)
+                    {
+                        shelfOrder.HasTriggeredEvent = true;
+
+                        OnOrderDeterrioration(shelf, shelfOrder);
+                    }
+                }
             };
 
             timer.Start();
@@ -100,14 +108,24 @@ namespace DeliverySimulator.Kitchen.Models
         {
             var shelf = shelves[AppSettings.Instance.AppConfig.Shelves.OverflowShelfName];
 
-            if (shelf.Orders.Count == shelf.MaxCapacity)
+            lock (shelf)
             {
-                var removedShelfOrder = shelf.RemoveRandom();
-                removedShelfOrder.StopAllTimers();
-                shelfNotificationService.PublishOrderDiscardedFromOverflowShelfEvent(shelfOrder.Order);
+                if (shelf.Orders.Count == shelf.MaxCapacity)
+                {
+                    var removedShelfOrder = shelf.RemoveRandom();
+                    lock (removedShelfOrder)
+                    {
+                        if (!removedShelfOrder.HasTriggeredEvent)
+                        {
+                            removedShelfOrder.HasTriggeredEvent = true;
+                            shelfNotificationService.PublishOrderDiscardedFromOverflowShelfEvent(shelfOrder.Order);
+                        }
+                    }
+
+                }
+
+                shelf.Add(shelfOrder);
             }
-            
-            shelf.Add(shelfOrder);
 
             return shelf;
         }
@@ -123,7 +141,17 @@ namespace DeliverySimulator.Kitchen.Models
 
             timer.Elapsed += (sender, args) =>
             {
-                OnCourierArrival(shelfOrder, shelf, timer);
+                lock (shelfOrder)
+                {
+                    if (!shelfOrder.HasTriggeredEvent)
+                    {
+                        shelfOrder.HasTriggeredEvent = true;
+
+                        OnCourierArrival(shelfOrder, shelf, timer);
+                    }
+
+                }
+
             };
 
             timer.Start();

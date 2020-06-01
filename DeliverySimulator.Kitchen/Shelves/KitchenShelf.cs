@@ -49,6 +49,8 @@ namespace DeliverySimulator.Kitchen.Models
         /// </summary>
         public List<ShelfOrder> Orders { get; }
 
+        
+
         /// <summary>
         /// Adds order to shelf. Element can not be added if shelf reached its MaxCapacity
         /// </summary>

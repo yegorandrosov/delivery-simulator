@@ -27,7 +27,6 @@ namespace DeliverySimulator.Kitchen
             using (var eventPublisher = new QueuePublisher(AppSettings.Instance.AppConfig.RabbitMQ.EventQueueName))
             {
                 var kitchenShelvesManager = new KitchenShelvesManager(
-                    new RegularKitchenShelfFactory(),
                     new CourierTimerFactory(),
                     new OrderDeterriorationTimerFactory(),
                     new QueueNotificationService(eventPublisher),

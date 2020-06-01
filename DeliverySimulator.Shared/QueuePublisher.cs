@@ -10,42 +10,46 @@ namespace DeliverySimulator.Shared
 {
     public class QueuePublisher : IDisposable
     {
-        private readonly IConnection connection;
-        private readonly IModel channel;
+        private readonly ConnectionFactory _factory;
+        private IConnection _connection;
         private readonly string queueName;
 
         public QueuePublisher(string queueName)
         {
-            var factory = new ConnectionFactory() { HostName = AppSettings.Instance.AppConfig.RabbitMQ.Host };
-            connection = factory.CreateConnection();
-            channel = connection.CreateModel();
-            channel.QueueDeclare(queue: queueName,
-                                 durable: false,
-                                 exclusive: false,
-                                 autoDelete: false,
-                                 arguments: null);
+            _factory = new ConnectionFactory() { HostName = AppSettings.Instance.AppConfig.RabbitMQ.Host };
             this.queueName = queueName;
         }
 
         public void Publish<T>(T item)
         {
-            var message = JsonConvert.SerializeObject(item);
-            var body = Encoding.UTF8.GetBytes(message);
+            if (_connection == null || !_connection.IsOpen)
+                _connection = _factory.CreateConnection();
 
-            channel.BasicPublish(exchange: "",
-                                 routingKey: queueName,
-                                 basicProperties: null,
-                                 body: body);
+            using (IModel channel = _connection.CreateModel())
+            {
+                channel.QueueDeclare(queue: queueName,
+                                 durable: false,
+                                 exclusive: false,
+                                 autoDelete: false,
+                                 arguments: null);
 
-            Published?.Invoke(this, new QueuePublisherEventArgs(message));
+                var message = JsonConvert.SerializeObject(item);
+                var body = Encoding.UTF8.GetBytes(message);
+
+                channel.BasicPublish(exchange: "",
+                                     routingKey: queueName,
+                                     basicProperties: null,
+                                     body: body);
+                Published?.Invoke(this, new QueuePublisherEventArgs(message));
+            }
+
         }
 
         public event EventHandler<QueuePublisherEventArgs> Published;
 
         public void Dispose()
         {
-            connection?.Dispose();
-            channel?.Dispose();
+            _connection?.Dispose();
         }
     }
 

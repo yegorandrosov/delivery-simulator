@@ -20,8 +20,7 @@ namespace DeliverySimulator.Kitchen.Models
     /// </summary>
     public class KitchenShelvesManager : IEnumerable<KitchenShelf>
     {
-        private ConcurrentDictionary<string, KitchenShelf> shelves;
-        private readonly IKitchenShelfFactory kitchenShelfFactory;
+        private Dictionary<string, KitchenShelf> shelves;
         private readonly IOrderTimerFactory courierTimerFactory;
         private readonly IOrderTimerFactory deterriorationTimerFactory;
         private readonly IShelfNotificationService shelfNotificationService;
@@ -29,25 +28,22 @@ namespace DeliverySimulator.Kitchen.Models
         /// <summary>
         /// Create new instance of <see cref="KitchenShelvesManager"/>
         /// </summary>
-        /// <param name="kitchenShelfFactory">Factory to create missing shelves when order with new <see cref="Order.Temp"/> arrives</param>
         /// <param name="courierTimerFactory">Timer factory to initialize courier routine</param>
         /// <param name="deterriorationTimerFactory">Timer factory to initialize deterrioration timers for orders</param>
         /// <param name="shelfNotificationService">Notification service to send messages about internal events</param>
         public KitchenShelvesManager(
-            IKitchenShelfFactory kitchenShelfFactory, 
             IOrderTimerFactory courierTimerFactory,
             IOrderTimerFactory deterriorationTimerFactory,
             IShelfNotificationService shelfNotificationService,
             IShelvesInitialization shelvesInitialization)
         {
-            shelves = new ConcurrentDictionary<string, KitchenShelf>();
+            shelves = new Dictionary<string, KitchenShelf>();
 
             foreach (var shelf in shelvesInitialization.GetShelves())
             {
-                shelves.TryAdd(shelf.Temp, shelf);
+                shelves.Add(shelf.Temp, shelf);
             }
 
-            this.kitchenShelfFactory = kitchenShelfFactory;
             this.courierTimerFactory = courierTimerFactory;
             this.deterriorationTimerFactory = deterriorationTimerFactory;
             this.shelfNotificationService = shelfNotificationService;

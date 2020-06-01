@@ -20,7 +20,7 @@ namespace DeliverySimulator.Kitchen.Shelves
         /// <returns></returns>
         public KitchenShelf Create(string temp)
         {
-            return new KitchenShelf(temp, Configuration.Shelves.RegularShelfCapacity, Configuration.Shelves.RegularShelfDecayModifier);
+            return new KitchenShelf(temp, AppSettings.Instance.AppConfig.Shelves.RegularShelfCapacity, AppSettings.Instance.AppConfig.Shelves.RegularShelfDecayModifier);
         }
     }
 }

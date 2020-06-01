@@ -16,7 +16,7 @@ namespace DeliverySimulator.OrderEmitter
         {
             var jsonFileOrderProvider = new JsonFileOrderProvider("orders.json");
 
-            using (var queuePublisher = new QueuePublisher(Configuration.RabbitMQ.KitchenQueueName))
+            using (var queuePublisher = new QueuePublisher(AppSettings.Instance.AppConfig.RabbitMQ.KitchenQueueName))
             {
                 queuePublisher.Published += (sender, ea) =>
                 {
@@ -34,6 +34,12 @@ namespace DeliverySimulator.OrderEmitter
 
         private static void EmitOrdersService_OnOutOfOrders(object sender, EventArgs args)
         {
+            using (var queuePublisher = new QueuePublisher(AppSettings.Instance
+                .AppConfig.RabbitMQ.KitchenTerminationQueueName))
+            {
+                queuePublisher.Publish(new object());
+            }
+
             Environment.Exit(0);
         }
     }

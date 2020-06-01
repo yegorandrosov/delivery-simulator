@@ -1,5 +1,6 @@
 ﻿using DeliverySimulator.Shared.Models;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,6 +13,8 @@ namespace DeliverySimulator.Kitchen.Models
     /// </summary>
     public class KitchenShelf
     {
+        private object _syncLock = new object();
+
         /// <summary>
         /// 
         /// </summary>
@@ -23,7 +26,7 @@ namespace DeliverySimulator.Kitchen.Models
             Temp = temp;
             MaxCapacity = maxCapacity;
             DecayModifier = decayModifier;
-            Orders = new LinkedList<ShelfOrder>();
+            Orders = new List<ShelfOrder>();
         }
 
         /// <summary>
@@ -44,7 +47,7 @@ namespace DeliverySimulator.Kitchen.Models
         /// <summary>
         /// Orders inside shelf.
         /// </summary>
-        public LinkedList<ShelfOrder> Orders { get; }
+        public List<ShelfOrder> Orders { get; }
 
         /// <summary>
         /// Adds order to shelf. Element can not be added if shelf reached its MaxCapacity
@@ -53,14 +56,17 @@ namespace DeliverySimulator.Kitchen.Models
         /// <returns>true, if order was added, otherwise - false</returns>
         public bool Add(ShelfOrder order)
         {
-            if (Orders.Count >= MaxCapacity)
+            lock (_syncLock)
             {
-                return false;
+                if (Orders.Count >= MaxCapacity)
+                {
+                    return false;
+                }
+
+                Orders.Add(order);
+
+                return true;
             }
-
-            Orders.AddLast(order);
-
-            return true;
         }
 
         /// <summary>
@@ -69,20 +75,16 @@ namespace DeliverySimulator.Kitchen.Models
         /// <returns>Shelf order that was removed</returns>
         public ShelfOrder RemoveRandom()
         {
-            var rand = new Random();
-            var elementIndexToRemove = rand.Next(0, Orders.Count - 1);
-            var node = Orders.First;
-            var ind = 0;
-
-            while (ind != elementIndexToRemove)
+            lock (_syncLock)
             {
-                node = node.Next;
-                ind++;
+                var rand = new Random();
+                var elementIndexToRemove = rand.Next(0, Orders.Count - 1);
+                var order = Orders[elementIndexToRemove];
+
+                Orders.Remove(order);
+
+                return order;
             }
-
-            Orders.Remove(node);
-
-            return node.Value;
         }
 
         /// <summary>
@@ -92,7 +94,10 @@ namespace DeliverySimulator.Kitchen.Models
         /// <returns>true, if order was removed, otherwise - false</returns>
         public bool Remove(ShelfOrder order)
         {
-            return Orders.Remove(order);
+            lock (_syncLock)
+            {
+                return Orders.Remove(order);
+            }
         }
     }
 }

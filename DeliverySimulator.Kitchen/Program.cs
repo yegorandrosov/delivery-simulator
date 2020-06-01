@@ -3,6 +3,7 @@ using DeliverySimulator.Kitchen.Models;
 using DeliverySimulator.Kitchen.NotificationServices;
 using DeliverySimulator.Kitchen.Renderers;
 using DeliverySimulator.Kitchen.Shelves;
+using DeliverySimulator.Kitchen.Shelves.DataInitialization;
 using DeliverySimulator.Kitchen.Shelves.ShelfTimers;
 using DeliverySimulator.Shared;
 using DeliverySimulator.Shared.Models;
@@ -19,23 +20,33 @@ namespace DeliverySimulator.Kitchen
     {
         static void Main(string[] args)
         {
+            Console.CursorVisible = false;
             Console.ForegroundColor = ConsoleColor.White;
 
-            using (var eventPublisher = new QueuePublisher(Configuration.RabbitMQ.EventQueueName))
+            using (var terminationQueueConsumer = new QueueConsumer(AppSettings.Instance.AppConfig.RabbitMQ.KitchenTerminationQueueName))
+            using (var eventPublisher = new QueuePublisher(AppSettings.Instance.AppConfig.RabbitMQ.EventQueueName))
             {
-                var kitchenShelvesManager = new SynchronizedKitchenShelvesManager(
+                var kitchenShelvesManager = new KitchenShelvesManager(
                     new RegularKitchenShelfFactory(),
                     new CourierTimerFactory(),
                     new OrderDeterriorationTimerFactory(),
-                    new QueueNotificationService(eventPublisher));
+                    new QueueNotificationService(eventPublisher),
+                    new ShelvesInitializationFromConfigFile());
+
+                terminationQueueConsumer.Received += (sender, ea) =>
+                {
+                    var terminationProcess = new KitchenTerminationProcess(kitchenShelvesManager);
+                };
 
                 IRenderer renderer = new KitchenConsoleRenderer(kitchenShelvesManager);
-                
+
                 using (var renderEngine = new SimpleTimerRenderEngine(renderer, fps: 1))
                 {
                     renderEngine.Start();
 
-                    using (var kitchenOrdersConsumer = new KitchenQueueConsumer(new QueueConsumer(Configuration.RabbitMQ.KitchenQueueName), kitchenShelvesManager))
+                    using (var kitchenOrdersConsumer = new KitchenQueueConsumer(
+                        new QueueConsumer(AppSettings.Instance.AppConfig.RabbitMQ.KitchenQueueName),
+                        kitchenShelvesManager))
                     {
                         Console.ReadKey();
                     }

@@ -1,10 +1,12 @@
 ﻿using DeliverySimulator.Kitchen.Shelves;
+using DeliverySimulator.Kitchen.Shelves.DataInitialization;
 using DeliverySimulator.Kitchen.Shelves.Notifications;
 using DeliverySimulator.Kitchen.Shelves.ShelfTimers;
 using DeliverySimulator.Shared;
 using DeliverySimulator.Shared.Models;
 using System;
 using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -18,7 +20,7 @@ namespace DeliverySimulator.Kitchen.Models
     /// </summary>
     public class KitchenShelvesManager : IEnumerable<KitchenShelf>
     {
-        private List<KitchenShelf> shelves;
+        private ConcurrentDictionary<string, KitchenShelf> shelves;
         private readonly IKitchenShelfFactory kitchenShelfFactory;
         private readonly IOrderTimerFactory courierTimerFactory;
         private readonly IOrderTimerFactory deterriorationTimerFactory;
@@ -35,26 +37,21 @@ namespace DeliverySimulator.Kitchen.Models
             IKitchenShelfFactory kitchenShelfFactory, 
             IOrderTimerFactory courierTimerFactory,
             IOrderTimerFactory deterriorationTimerFactory,
-            IShelfNotificationService shelfNotificationService)
+            IShelfNotificationService shelfNotificationService,
+            IShelvesInitialization shelvesInitialization)
         {
-            shelves = new List<KitchenShelf>();
+            shelves = new ConcurrentDictionary<string, KitchenShelf>();
 
-            Initialize();
+            foreach (var shelf in shelvesInitialization.GetShelves())
+            {
+                shelves.TryAdd(shelf.Temp, shelf);
+            }
+
             this.kitchenShelfFactory = kitchenShelfFactory;
             this.courierTimerFactory = courierTimerFactory;
             this.deterriorationTimerFactory = deterriorationTimerFactory;
             this.shelfNotificationService = shelfNotificationService;
-        }
 
-        /// <summary>
-        /// Add "overflow" shelf to the storage.
-        /// </summary>
-        protected virtual void Initialize()
-        {
-            shelves.Add(new KitchenShelf(Configuration.Shelves.OverflowShelfName,
-                Configuration.Shelves.OveflowShelfCapacity,
-                Configuration.Shelves.OverflowShelfDecayModifier)
-            );
         }
 
         /// <summary>
@@ -63,12 +60,11 @@ namespace DeliverySimulator.Kitchen.Models
         /// <param name="order">Order to add.</param>
         public virtual void AddOrder(Order order)
         {
-            var shelf = shelves.FirstOrDefault(x => x.Temp == order.Temp);
+            var shelf = shelves[order.Temp];
 
             if (shelf == null)
             {
-                shelf = kitchenShelfFactory.Create(order.Temp);
-                shelves.Add(shelf);
+                throw new ArgumentException($"Shelf \"{order.Temp}\" was not initialized", nameof(order.Temp));
             }
 
             var shelfOrder = new ShelfOrder(order, DateTime.Now);
@@ -100,13 +96,13 @@ namespace DeliverySimulator.Kitchen.Models
         protected virtual void OnOrderDeterrioration(KitchenShelf shelf, ShelfOrder shelfOrder)
         {
             shelfOrder.StopAllTimers();
-            RemoveOrder(shelf, shelfOrder);
+            RemoveOrderFromShelf(shelf, shelfOrder);
             shelfNotificationService.PublishOrderDeterrioratedEvent(shelfOrder.Order);
         }
 
         protected virtual KitchenShelf AddToOverflowShelf(ShelfOrder shelfOrder)
         {
-            var shelf = shelves.FirstOrDefault(x => x.Temp == Configuration.Shelves.OverflowShelfName);
+            var shelf = shelves[AppSettings.Instance.AppConfig.Shelves.OverflowShelfName];
 
             if (shelf.Orders.Count == shelf.MaxCapacity)
             {
@@ -120,7 +116,7 @@ namespace DeliverySimulator.Kitchen.Models
             return shelf;
         }
 
-        protected virtual void RemoveOrder(KitchenShelf shelf, ShelfOrder order)
+        protected virtual void RemoveOrderFromShelf(KitchenShelf shelf, ShelfOrder order)
         {
             shelf.Remove(order);
         }
@@ -148,7 +144,7 @@ namespace DeliverySimulator.Kitchen.Models
 
         public IEnumerator<KitchenShelf> GetEnumerator()
         {
-            return shelves.GetEnumerator();
+            return shelves.Values.GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()

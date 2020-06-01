@@ -85,7 +85,7 @@ namespace DeliverySimulator.OrderEmitter
         {
             timer?.Dispose();
             timer = new Timer();
-            timer.Interval = 1000 / Configuration.OrderEmitter.NumberOfOrdersPerSecond;
+            timer.Interval = 1000 / AppSettings.Instance.AppConfig.OrderEmitter.NumberOfOrdersPerSecond;
             isOutOfOrdersTriggered = false;
         }
     }

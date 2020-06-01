@@ -64,8 +64,11 @@
     <Compile Include="Interfaces\IRenderEngine.cs" />
     <Compile Include="Interfaces\IRenderer.cs" />
     <Compile Include="KitchenQueueConsumer.cs" />
+    <Compile Include="KitchenTermination.cs" />
     <Compile Include="NotificationServices\QueueNotificationService.cs" />
     <Compile Include="Renderers\SimpleTimerRenderEngine.cs" />
+    <Compile Include="Shelves\DataInitialization\IShelvesInitialization.cs" />
+    <Compile Include="Shelves\DataInitialization\ShelvesInitializationFromConfigFile.cs" />
     <Compile Include="Shelves\Factory\IKitchenShelfFactory.cs" />
     <Compile Include="Shelves\KitchenShelf.cs" />
     <Compile Include="Shelves\KitchenShelvesManager.cs" />
@@ -75,7 +78,6 @@
     <Compile Include="Shelves\ShelfTimers\CourierTimerFactory.cs" />
     <Compile Include="Shelves\ShelfTimers\OrderDeterriorationTimerFactory.cs" />
     <Compile Include="Shelves\ShelfTimers\IOrderTimerFactory.cs" />
-    <Compile Include="Shelves\SynchronizedKitchenShelvesManager.cs" />
     <Compile Include="Renderers\KitchenConsoleRenderer.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -23,7 +23,7 @@ namespace DeliverySimulator.Shared
         /// <param name="queueName">Queue name</param>
         public QueueConsumer(string queueName)
         {
-            var factory = new ConnectionFactory() { HostName = Configuration.RabbitMQ.Host };
+            var factory = new ConnectionFactory() { HostName = AppSettings.Instance.AppConfig.RabbitMQ.Host };
             connection = factory.CreateConnection();
             channel = connection.CreateModel();
             channel.QueueDeclare(queue: queueName,

@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace DeliverySimulator.EventLogDisplay
@@ -19,7 +20,8 @@ namespace DeliverySimulator.EventLogDisplay
 
             var factory = new ConnectionFactory() { HostName = "localhost" };
 
-            using (var eventQueueConsumer = new QueueConsumer(Configuration.RabbitMQ.EventQueueName))
+            using (var eventTerminationQueueConsumer = new QueueConsumer(AppSettings.Instance.AppConfig.RabbitMQ.EventLogDisplayTerminationQeueueName))
+            using (var eventQueueConsumer = new QueueConsumer(AppSettings.Instance.AppConfig.RabbitMQ.EventQueueName))
             {
                 eventQueueConsumer.Received += (model, ea) =>
                 {
@@ -43,6 +45,19 @@ namespace DeliverySimulator.EventLogDisplay
                     Console.WriteLine("{0} Received {1}", DateTime.Now, eventItem.Message);
 
                     Console.ForegroundColor = ConsoleColor.White;
+                };
+
+                eventTerminationQueueConsumer.Received += (model, ea) =>
+                {
+                    Console.WriteLine("Termination was requested");
+
+                    for (var i = 5; i != 0; i--)
+                    {
+                        Console.WriteLine($"Shutting down in {i}");
+                        Thread.Sleep((int)TimeSpan.FromSeconds(1).TotalMilliseconds);
+                    }
+
+                    Environment.Exit(0);
                 };
 
                 Console.WriteLine(" Press [enter] to exit.");

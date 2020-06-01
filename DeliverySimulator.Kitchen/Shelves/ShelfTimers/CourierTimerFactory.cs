@@ -21,7 +21,9 @@ namespace DeliverySimulator.Kitchen.Shelves.ShelfTimers
         /// <returns></returns>
         public Timer Create(KitchenShelf shelf, ShelfOrder order)
         {
-            var courierArrivalDelay = random.Next(Configuration.Shelves.Timers.CourierTimerMinDelay, Configuration.Shelves.Timers.CourierTimerMaxDelay);
+            var courierArrivalDelay = random.Next(
+                AppSettings.Instance.AppConfig.Shelves.Timers.CourierTimerMinDelay,
+                AppSettings.Instance.AppConfig.Shelves.Timers.CourierTimerMaxDelay);
             var timer = new Timer(TimeSpan.FromSeconds(courierArrivalDelay).TotalMilliseconds);
 
             timer.AutoReset = false;
